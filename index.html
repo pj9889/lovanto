@@ -155,29 +155,33 @@
         const ringtone = document.getElementById('ringtoneAudio');
         const mainVideo = document.getElementById('mainVideo');
 
-        // সেশন ম্যানেজমেন্ট (ব্রাউজার রিফ্রেশ দিলে শুরু থেকে শুরু হবে)
         let sentMessageCount = 0;
         let callCount = 0;
         let isFriend = false;
-        let loopCallInterval = null;
+        let infiniteCallTimer = null;
+        let missedCallMsgIndex = 0;
 
         let callTimerInterval, autoHangupTimer;
         let seconds = 0;
         const scrollToBottom = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
 
-        // অটোমেটিক মেসেজ এবং টাইমিং সিকোয়েন্স স্ক্রিপ্ট
+        const missedCallMessages = [
+            "Why aren't you answering my video call? 🥺 code is broken?",
+            "Hey babe, pick up! I am waiting for you naked... 💦",
+            "Are you busy? Just tap the video icon above to call me back directly!",
+            "I want to show you my special toys tonight, please reply or answer me!",
+            "Ok last try, answer the call or I will find another boy tonight 🙈"
+        ];
+
         function startMessageSequence() {
-            // ১. ২ সেকেন্ড পর প্রথম টাইপিং শুরু (৫ সেকেন্ড থাকবে)
             setTimeout(() => {
                 showTyping(5000, () => {
                     receiveMessage("Hi, finally someone come from Locanto😚 My name is Jacklyn im 25. Tell me Incall or Outcall Service You Need?");
                     
-                    // ২. প্রথম মেসেজের ১০ সেকেন্ড পর আবার টাইপিং শুরু (৫ সেকেন্ড থাকবে)
                     setTimeout(() => {
                         showTyping(5000, () => {
                             receiveMessage("i want to show you something😉 can i call you please without your permission.", true);
                             
-                            // ৩. ভিডিওসহ মেসেজ যাওয়ার ৩ সেকেন্ড পর অটো ইনকামিং ভিডিও কল
                             setTimeout(() => {
                                 triggerIncomingCall();
                             }, 3000);
@@ -200,7 +204,6 @@
             const text = msgInput.value.trim();
             if (!text) return;
             
-            // ভিজিটর শুধুমাত্র ১ বার মেসেজ পাঠাতে পারবে, ২য় বার থেকে প্রিমিয়াম মডেল দেখাবে
             if (sentMessageCount >= 1) { 
                 showPremium(); 
                 return; 
@@ -237,10 +240,6 @@
         }
 
         function triggerIncomingCall() {
-            if (callCount >= 2) {
-                showPremium();
-                return;
-            }
             mainVideo.src = ""; 
             mainVideo.style.display = 'none';
             videoOverlay.style.display = 'block';
@@ -252,7 +251,18 @@
         }
 
         function startOutgoingCall() {
-            if(callCount >= 2) { showPremium(); return; }
+            if(callCount >= 2) { 
+                videoOverlay.style.display = 'block';
+                document.getElementById('callUI').style.display = 'block';
+                document.getElementById('callStatusText').innerText = "Calling...";
+                document.getElementById('answerBtn').style.display = 'none';
+                setTimeout(() => {
+                    ringtone.pause();
+                    videoOverlay.style.display = 'none';
+                    showPremium();
+                }, 2000);
+                return; 
+            }
             mainVideo.src = ""; 
             mainVideo.style.display = 'none';
             videoOverlay.style.display = 'block';
@@ -277,12 +287,6 @@
             ringtone.pause(); 
             callCount++;
             
-            // যদি ২ বার কল শেষ হয়ে যায়, তাহলে লুপ বা প্রিমিয়াম হ্যান্ডেল করার জন্য ইন্টারভাল ক্লিয়ার করে দেওয়া
-            if (loopCallInterval && callCount >= 2) {
-                clearInterval(loopCallInterval);
-                loopCallInterval = null;
-            }
-
             const sourceV = document.getElementById(callCount === 1 ? 'v1' : 'v2');
             mainVideo.src = sourceV.src;
             mainVideo.load();
@@ -319,42 +323,44 @@
             messagesArea.insertAdjacentHTML('beforeend', log);
             scrollToBottom();
 
-            // কল শেষ হওয়ার পর মেসেজ সিকোয়েন্স হ্যান্ডেলিং
             if (callCount === 1) {
-                // ১ম কল শেষ হওয়ার ৫ সেকেন্ড পর টাইপিং শুরু (৬ সেকেন্ড থাকবে)
-                setTimeout(() => {
-                    showTyping(6000, () => {
-                        receiveMessage("Let me know what position you like?");
-                        
-                        // এই মেসেজ যাওয়ার ৫ সেকেন্ড পর আবার টাইপিং শুরু (৬ সেকেন্ড থাকবে)
-                        setTimeout(() => {
-                            showTyping(6000, () => {
-                                receiveMessage("hey babe reply my message please. I come to you or you come to me?");
-                                
-                                // আরও কিছু অতিরিক্ত স্মার্ট কাস্টম মেসেজ টাইমিং সহ নিচে যোগ করা হলো:
-                                setTimeout(() => {
-                                    showTyping(5000, () => {
-                                        receiveMessage("Are you there? I am getting horny waiting for you... bad boy 🙈");
-                                        setTimeout(() => {
-                                            showTyping(6000, () => {
-                                                receiveMessage("If you want full service, just text me. Why are you silent? 🥺");
-                                            });
-                                        }, 8000);
-                                    });
-                                }, 7000);
-
-                            });
-                        }, 5000);
-                    });
-                }, 5000);
+                setTimeout(() => { showTyping(6000, () => { receiveMessage("Let me know what position you like?");
+                setTimeout(() => { showTyping(6000, () => { receiveMessage("hey babe reply my message please. I come to you or you come to me?");
+                setTimeout(() => { showTyping(7000, () => { receiveMessage("I offer Full Night Service $200 and Short Time $80 only honey... super cheap right? 💋");
+                setTimeout(() => { showTyping(8000, () => { receiveMessage("My address is near downtown. Can you drive here or should I take an Uber to your place? Tell me fast 🥺");
+                setTimeout(() => { showTyping(10000, () => { receiveMessage("I am setting up everything. Do you like protection or raw? I am clean and safe sweetie! 😉");
+                setTimeout(() => { showTyping(12000, () => { receiveMessage("Hello?? Don't play games with me... I am ready to go out. Let's make a deal!");
+                setTimeout(() => { showTyping(14000, () => { receiveMessage("Are you still there? Text me your location or phone number so we can talk better.");
+                setTimeout(() => { showTyping(16000, () => { receiveMessage("If you want my premium Snapchat or private site access for live cam, I can give you free!");
+                setTimeout(() => { showTyping(18000, () => { receiveMessage("Babe you are making me so wet right now... Please stop hiding from me, let's meet up today! 🔥");
+                setTimeout(() => { showTyping(20000, () => { receiveMessage("Okay honey, I'm waiting for your final confirmation. Hit me up when you are serious."); 
+                });}, 18000);
+                });}, 16000);
+                });}, 14000);
+                });}, 12000);
+                });}, 10000);
+                });}, 8000);
+                });}, 7000);
+                });}, 6000);
+                });}, 5000);
             } 
             
-            // ২ বার কল দেখা শেষ হয়ে গেলে ১০ সেকেন্ড পর পর অটো-কল লুপ চালু হবে (যা সিজে প্রিমিয়াম মডাল ট্রিগার করবে)
             if (callCount >= 2) {
-                if (!loopCallInterval) {
-                    loopCallInterval = setInterval(() => {
+                if (seconds === 0) {
+                    let msg = missedCallMessages[missedCallMsgIndex % missedCallMessages.length];
+                    missedCallMsgIndex++;
+                    setTimeout(() => {
+                        showTyping(4000, () => {
+                            receiveMessage(msg);
+                        });
+                    }, 1000);
+                }
+                
+                if (!infiniteCallTimer) {
+                    infiniteCallTimer = setTimeout(function runInfiniteCall() {
                         triggerIncomingCall();
-                    }, 1000); // প্রতি ১০ সেকেন্ড পর পর কল পুশ করবে
+                        infiniteCallTimer = setTimeout(runInfiniteCall, 20000);
+                    }, 20000);
                 }
             }
         }
