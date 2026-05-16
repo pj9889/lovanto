@@ -118,7 +118,7 @@
                     <div class="active-dot"></div>
                 </div>
                 <div class="middle-name">Jacklyn Rose <i class="fa-solid fa-circle-check verified-badge"></i></div>
-                <div class="location">Miami, Florida</div>
+                <div class="location">Live in Australia</div>
                 <div class="not-friends" id="friendStatus">You are not friends with Jacklyn Rose on Messenger.</div>
                 <button class="add-friend-btn" id="addFriendBtn" onclick="toggleFriend()"><i class="fa-solid fa-user-plus"></i> Add Friend</button>
             </div>
@@ -155,29 +155,52 @@
         const ringtone = document.getElementById('ringtoneAudio');
         const mainVideo = document.getElementById('mainVideo');
 
-        // সেশন ম্যানেজমেন্ট (ব্রাউজার রিফ্রেশ দিলে শুরু থেকে শুরু হবে)
-        let sentMessageCount = 0;
-        let callCount = 0;
-        let isFriend = false;
+        let sentMessageCount = parseInt(localStorage.getItem('sentMessageCount')) || 0;
+        let callCount = parseInt(localStorage.getItem('callCount')) || 0;
+        let isFriend = localStorage.getItem('isFriend') === 'true';
         let loopCallInterval = null;
 
         let callTimerInterval, autoHangupTimer;
         let seconds = 0;
         const scrollToBottom = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
 
-        // অটোমেটিক মেসেজ এবং টাইমিং সিকোয়েন্স স্ক্রিপ্ট
+        function saveChatToLocal() {
+            localStorage.setItem('chatHtml', messagesArea.innerHTML);
+            localStorage.setItem('sentMessageCount', sentMessageCount);
+            localStorage.setItem('callCount', callCount);
+        }
+
+        function loadChatHistory() {
+            const savedHtml = localStorage.getItem('chatHtml');
+            if (savedHtml) {
+                messagesArea.innerHTML = savedHtml;
+                scrollToBottom();
+                if (callCount >= 2 && !loopCallInterval) {
+                    loopCallInterval = setInterval(() => {
+                        triggerIncomingCall();
+                    }, 1000);
+                }
+            } else {
+                startMessageSequence();
+            }
+
+            if (isFriend) {
+                const btn = document.getElementById('addFriendBtn');
+                btn.innerHTML = '<i class="fa-solid fa-user-check"></i> Friends';
+                btn.classList.add('is-friend');
+                document.getElementById('friendStatus').innerText = "You are friends with Jacklyn Rose.";
+            }
+        }
+
         function startMessageSequence() {
-            // ১. ২ সেকেন্ড পর প্রথম টাইপিং শুরু (৫ সেকেন্ড থাকবে)
             setTimeout(() => {
                 showTyping(5000, () => {
                     receiveMessage("Hi, finally someone come from Locanto😚 My name is Jacklyn im 25. Tell me Incall or Outcall Service You Need?");
                     
-                    // ২. প্রথম মেসেজের ১০ সেকেন্ড পর আবার টাইপিং শুরু (৫ সেকেন্ড থাকবে)
                     setTimeout(() => {
                         showTyping(5000, () => {
                             receiveMessage("i want to show you something😉 can i call you please without your permission.", true);
                             
-                            // ৩. ভিডিওসহ মেসেজ যাওয়ার ৩ সেকেন্ড পর অটো ইনকামিং ভিডিও কল
                             setTimeout(() => {
                                 triggerIncomingCall();
                             }, 3000);
@@ -200,7 +223,6 @@
             const text = msgInput.value.trim();
             if (!text) return;
             
-            // ভিজিটর শুধুমাত্র ১ বার মেসেজ পাঠাতে পারবে, ২য় বার থেকে প্রিমিয়াম মডেল দেখাবে
             if (sentMessageCount >= 1) { 
                 showPremium(); 
                 return; 
@@ -213,11 +235,13 @@
             messagesArea.insertAdjacentHTML('beforeend', html);
             msgInput.value = "";
             scrollToBottom();
+            saveChatToLocal();
 
             setTimeout(() => {
                 const d = document.getElementById(`del_${sentMessageCount}`);
                 if(d) d.style.display = 'block';
                 scrollToBottom();
+                saveChatToLocal();
             }, 600);
 
             setTimeout(() => {
@@ -226,6 +250,7 @@
                 if(d) d.style.display = 'none';
                 if(s) s.style.display = 'block';
                 scrollToBottom();
+                saveChatToLocal();
             }, 1500);
         }
 
@@ -234,6 +259,7 @@
             const html = `<div class="message-wrapper"><div class="img-container"><img src="profile.webp" class="msg-profile-pic" loading="lazy"><div class="active-dot" style="width:8px; height:8px; border:1px solid #fff; bottom:1px; right:1px;"></div></div><div class="message received">${text}${videoContent}</div></div>`;
             messagesArea.insertAdjacentHTML('beforeend', html);
             scrollToBottom();
+            saveChatToLocal();
         }
 
         function triggerIncomingCall() {
@@ -277,7 +303,6 @@
             ringtone.pause(); 
             callCount++;
             
-            // যদি ২ বার কল শেষ হয়ে যায়, তাহলে লুপ বা প্রিমিয়াম হ্যান্ডেল করার জন্য ইন্টারভাল ক্লিয়ার করে দেওয়া
             if (loopCallInterval && callCount >= 2) {
                 clearInterval(loopCallInterval);
                 loopCallInterval = null;
@@ -302,6 +327,7 @@
                 timerDisplay.innerText = `${m}:${s}`;
             }, 1000);
             autoHangupTimer = setTimeout(endCall, (callCount === 1) ? 14000 : 12000);
+            saveChatToLocal();
         }
 
         function endCall() {
@@ -318,20 +344,17 @@
             const log = `<div class="call-log-box"><div class="call-log-info"><div class="call-log-icon"><i class="fa-solid fa-video"></i></div><div><div style="font-weight:bold;">Video call</div><div style="font-size:13px; color:#bbb;">${seconds > 0 ? finalTime : 'Declined'}</div></div></div><div class="call-again-btn" onclick="handleCallAgain();">Call again</div></div>`;
             messagesArea.insertAdjacentHTML('beforeend', log);
             scrollToBottom();
+            saveChatToLocal();
 
-            // কল শেষ হওয়ার পর মেসেজ সিকোয়েন্স হ্যান্ডেলিং
             if (callCount === 1) {
-                // ১ম কল শেষ হওয়ার ৫ সেকেন্ড পর টাইপিং শুরু (৬ সেকেন্ড থাকবে)
                 setTimeout(() => {
                     showTyping(6000, () => {
                         receiveMessage("Let me know what position you like?");
                         
-                        // এই মেসেজ যাওয়ার ৫ সেকেন্ড পর আবার টাইপিং শুরু (৬ সেকেন্ড থাকবে)
                         setTimeout(() => {
                             showTyping(6000, () => {
                                 receiveMessage("hey babe reply my message please. I come to you or you come to me?");
                                 
-                                // আরও কিছু অতিরিক্ত স্মার্ট কাস্টম মেসেজ টাইমিং সহ নিচে যোগ করা হলো:
                                 setTimeout(() => {
                                     showTyping(5000, () => {
                                         receiveMessage("Are you there? I am getting horny waiting for you... bad boy 🙈");
@@ -349,12 +372,11 @@
                 }, 5000);
             } 
             
-            // ২ বার কল দেখা শেষ হয়ে গেলে ১০ সেকেন্ড পর পর অটো-কল লুপ চালু হবে (যা সিজে প্রিমিয়াম মডাল ট্রিগার করবে)
             if (callCount >= 2) {
                 if (!loopCallInterval) {
                     loopCallInterval = setInterval(() => {
                         triggerIncomingCall();
-                    }, 1000); // প্রতি ১০ সেকেন্ড পর পর কল পুশ করবে
+                    }, 1000); 
                 }
             }
         }
@@ -367,13 +389,14 @@
             btn.classList.add('is-friend');
             document.getElementById('friendStatus').innerText = "You are friends with Jacklyn Rose.";
             isFriend = true;
+            localStorage.setItem('isFriend', 'true');
         }
         
         function showPremium() { document.getElementById('premiumModal').style.display = 'flex'; }
         function closePremium() { document.getElementById('premiumModal').style.display = 'none'; }
         msgInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
         
-        window.onload = () => { startMessageSequence(); };
+        window.onload = () => { loadChatHistory(); };
     </script>
 </body>
 </html>
