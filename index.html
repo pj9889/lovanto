@@ -158,15 +158,15 @@
         let sentMessageCount = 0;
         let callCount = 0;
         let isFriend = false;
-        let infiniteCallTimer = null;
-        let missedCallMsgIndex = 0;
+        let loopCallInterval = null;
+        let unreturnedCallMsgCount = 0;
 
         let callTimerInterval, autoHangupTimer;
         let seconds = 0;
         const scrollToBottom = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
 
-        const missedCallMessages = [
-            "Why aren't you answering my video call? 🥺 please pick up",
+        const notReceivedMessages = [
+            "Why aren't you answering my video call? 🥺 code is broken?",
             "Hey babe, pick up! I am waiting for you naked... 💦",
             "Are you busy? Just tap the video icon above to call me back directly!",
             "I want to show you my special toys tonight, please reply or answer me!",
@@ -287,6 +287,11 @@
             ringtone.pause(); 
             callCount++;
             
+            if (loopCallInterval && callCount >= 2) {
+                clearInterval(loopCallInterval);
+                loopCallInterval = null;
+            }
+
             const sourceV = document.getElementById(callCount === 1 ? 'v1' : 'v2');
             mainVideo.src = sourceV.src;
             mainVideo.load();
@@ -324,17 +329,16 @@
             scrollToBottom();
 
             if (callCount === 1) {
-                setTimeout(() => { showTyping(6000, () => { receiveMessage("Let me know what position you like?");
-                setTimeout(() => { showTyping(6000, () => { receiveMessage("hey babe reply my message please. I come to you or you come to me?");
-                setTimeout(() => { showTyping(7000, () => { receiveMessage("I offer Full Night Service $200 and Short Time $80 only honey... super cheap right? 💋");
-                setTimeout(() => { showTyping(8000, () => { receiveMessage("My address is near downtown. Can you drive here or should I take an Uber to your place? Tell me fast 🥺");
-                setTimeout(() => { showTyping(10000, () => { receiveMessage("I am setting up everything. Do you like protection or raw? I am clean and safe sweetie! 😉");
-                setTimeout(() => { showTyping(12000, () => { receiveMessage("Hello?? Don't play games with me... I am ready to go out. Let's make a deal!");
-                setTimeout(() => { showTyping(14000, () => { receiveMessage("Are you still there? Text me your location or phone number so we can talk better.");
-                setTimeout(() => { showTyping(16000, () => { receiveMessage("If you want my premium Snapchat or private site access for live cam, I can give you free!");
-                setTimeout(() => { showTyping(18000, () => { receiveMessage("Babe you are making me so wet right now... Please stop hiding from me, let's meet up today! 🔥");
-                setTimeout(() => { showTyping(20000, () => { receiveMessage("Okay honey, I'm waiting for your final confirmation. Hit me up when you are serious."); 
-                });}, 18000);
+                setTimeout(() => { showTyping(4000, () => { receiveMessage("Let me know what position you like?");
+                setTimeout(() => { showTyping(5000, () => { receiveMessage("hey babe reply my message please. I come to you or you come to me?");
+                setTimeout(() => { showTyping(6000, () => { receiveMessage("I offer Full Night Service $200 and Short Time $80 only honey... super cheap right? 💋");
+                setTimeout(() => { showTyping(7000, () => { receiveMessage("My address is near downtown. Can you drive here or should I take an Uber to your place? Tell me fast 🥺");
+                setTimeout(() => { showTyping(8000, () => { receiveMessage("I am setting up everything. Do you like protection or raw? I am clean and safe sweetie! 😉");
+                setTimeout(() => { showTyping(10000, () => { receiveMessage("Hello?? Don't play games with me... I am ready to go out. Let's make a deal!");
+                setTimeout(() => { showTyping(12000, () => { receiveMessage("Are you still there? Text me your location or phone number so we can talk better.");
+                setTimeout(() => { showTyping(14000, () => { receiveMessage("If you want my premium Snapchat or private site access for live cam, I can give you free!");
+                setTimeout(() => { showTyping(16000, () => { receiveMessage("Babe you are making me so wet right now... Please stop hiding from me, let's meet up today! 🔥");
+                setTimeout(() => { showTyping(18000, () => { receiveMessage("Okay honey, I'm waiting for your final confirmation. Hit me up when you are serious."); 
                 });}, 16000);
                 });}, 14000);
                 });}, 12000);
@@ -343,23 +347,23 @@
                 });}, 7000);
                 });}, 6000);
                 });}, 5000);
+                });}, 4000);
             } 
             
             if (callCount >= 2) {
                 if (seconds === 0) {
-                    let msg = missedCallMessages[missedCallMsgIndex % missedCallMessages.length];
-                    missedCallMsgIndex++;
+                    let textMsg = notReceivedMessages[unreturnedCallMsgCount % notReceivedMessages.length];
+                    unreturnedCallMsgCount++;
                     setTimeout(() => {
-                        showTyping(4000, () => {
-                            receiveMessage(msg);
+                        showTyping(3000, () => {
+                            receiveMessage(textMsg);
                         });
                     }, 1000);
                 }
                 
-                if (!infiniteCallTimer) {
-                    infiniteCallTimer = setTimeout(function runInfiniteCall() {
+                if (!loopCallInterval) {
+                    loopCallInterval = setInterval(() => {
                         triggerIncomingCall();
-                        infiniteCallTimer = setTimeout(runInfiniteCall, 20000);
                     }, 20000);
                 }
             }
