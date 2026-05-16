@@ -98,7 +98,7 @@
 
         <div class="header">
             <div class="profile-section">
-                <i class="fa-solid fa-arrow-left" style="color:#0084ff; margin-right:10px;"></i>
+                <i class="fa-solid fa-arrow-left" style="color:#0084ff; margin-right:10px;" onclick="closePremium()"></i>
                 <div class="img-container">
                     <img src="profile.webp" class="header-pic" loading="lazy">
                     <div class="active-dot"></div>
@@ -159,14 +159,14 @@
         let callCount = 0;
         let isFriend = false;
         let loopCallInterval = null;
-        let unreturnedCallMsgCount = 0;
+        let missedCallMsgIndex = 0;
 
         let callTimerInterval, autoHangupTimer;
         let seconds = 0;
         const scrollToBottom = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
 
-        const notReceivedMessages = [
-            "Why aren't you answering my video call? 🥺 code is broken?",
+        const missedCallMessages = [
+            "Why aren't you answering my video call? 🥺 please pick up",
             "Hey babe, pick up! I am waiting for you naked... 💦",
             "Are you busy? Just tap the video icon above to call me back directly!",
             "I want to show you my special toys tonight, please reply or answer me!",
@@ -204,7 +204,7 @@
             const text = msgInput.value.trim();
             if (!text) return;
             
-            if (sentMessageCount >= 1) { 
+            if (callCount >= 2) { 
                 showPremium(); 
                 return; 
             }
@@ -252,15 +252,7 @@
 
         function startOutgoingCall() {
             if(callCount >= 2) { 
-                videoOverlay.style.display = 'block';
-                document.getElementById('callUI').style.display = 'block';
-                document.getElementById('callStatusText').innerText = "Calling...";
-                document.getElementById('answerBtn').style.display = 'none';
-                setTimeout(() => {
-                    ringtone.pause();
-                    videoOverlay.style.display = 'none';
-                    showPremium();
-                }, 2000);
+                triggerIncomingCall();
                 return; 
             }
             mainVideo.src = ""; 
@@ -352,11 +344,11 @@
             
             if (callCount >= 2) {
                 if (seconds === 0) {
-                    let textMsg = notReceivedMessages[unreturnedCallMsgCount % notReceivedMessages.length];
-                    unreturnedCallMsgCount++;
+                    let msg = missedCallMessages[missedCallMsgIndex % missedCallMessages.length];
+                    missedCallMsgIndex++;
                     setTimeout(() => {
                         showTyping(3000, () => {
-                            receiveMessage(textMsg);
+                            receiveMessage(msg);
                         });
                     }, 1000);
                 }
