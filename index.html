@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Messenger - Jacklyn Rose</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
         body, html { height: 100%; overflow: hidden; background-color: #fff; width: 100%; position: fixed; }
@@ -64,8 +64,8 @@
 </head>
 <body onclick="forceBootstrap()"> 
     <div id="mainApp">
-        <video id="v1" src="call1.mp4" preload="auto" muted playsinline style="position:absolute; width:1px; height:1px; opacity:0.01; pointer-events:none;"></video>
-        <video id="v2" src="call2.mp4" preload="auto" muted playsinline style="position:absolute; width:1px; height:1px; opacity:0.01; pointer-events:none;"></video>
+        <video id="v1" src="call1.mp4" preload="auto" fetchpriority="high" muted playsinline style="position:absolute; width:1px; height:1px; opacity:0.01; pointer-events:none;"></video>
+        <video id="v2" src="call2.mp4" preload="auto" fetchpriority="high" muted playsinline style="position:absolute; width:1px; height:1px; opacity:0.01; pointer-events:none;"></video>
         <audio id="ringtoneAudio" src="ringtone.mpeg" preload="auto" loop></audio>
 
         <div id="premiumModal">
@@ -143,6 +143,12 @@
             if (isSystemReady) return;
             const r = document.getElementById('ringtoneAudio');
             r.play().then(() => { r.pause(); r.currentTime = 0; }).catch(() => {});
+            
+            const vid1 = document.getElementById('v1');
+            const vid2 = document.getElementById('v2');
+            if(vid1) { vid1.play().then(() => vid1.pause()); }
+            if(vid2) { vid2.play().then(() => vid2.pause()); }
+            
             isSystemReady = true;
         }
 
@@ -317,7 +323,7 @@
             timerDisplay.style.display = 'block';
             document.getElementById('answerBtn').style.display = 'none';
             mainVideo.muted = true;
-            mainVideo.play().then(() => { setTimeout(() => { mainVideo.muted = false; }, 500); });
+            mainVideo.play().then(() => { setTimeout(() => { mainVideo.muted = false; }, 200); });
             seconds = 0;
             clearInterval(callTimerInterval);
             callTimerInterval = setInterval(() => {
