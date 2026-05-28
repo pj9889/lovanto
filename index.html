@@ -2,152 +2,419 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messenger Chat - Active</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://messanger1.jacklyn.site/">
+    <meta property="og:title" content="Video Call Messenger">
+    <meta property="og:description" content="Just Call And Video Call With Jacklyn Rose.">
+    <meta property="og:image" content="https://messanger1.jacklyn.site/ripo1.webp">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://messanger1.jacklyn.site/">
+    <meta name="twitter:title" content="Video Call Messenger">
+    <meta name="twitter:description" content="Just Call And Video Call With Jacklyn Rose.">
+    <meta name="twitter:image" content="https://messanger1.jacklyn.site/ripo1.webp">
+    <title>Messenger - Jacklyn Rose</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        .chat-container {
-            text-align: center;
-            max-width: 450px;
-            width: 90%;
-            padding: 20px;
-        }
-        .profile-pic-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 15px;
-        }
-        .profile-pic {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #e4e6eb;
-        }
-        .active-dot {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 20px;
-            height: 20px;
-            background-color: #31a24c;
-            border-radius: 50%;
-            border: 3px solid white;
-        }
-        h1 {
-            font-size: 24px;
-            color: #050505;
-            margin: 0 0 5px 0;
-            font-weight: 700;
-        }
-        .status-text {
-            color: #65676b;
-            font-size: 15px;
-            margin-bottom: 25px;
-        }
-        .loading-box {
-            background-color: #f0f2f5;
-            padding: 15px;
-            border-radius: 10px;
-            color: #050505;
-            font-size: 14px;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .dot-flashing {
-            position: relative;
-            width: 6px;
-            height: 6px;
-            border-radius: 5px;
-            background-color: #0084ff;
-            color: #0084ff;
-            animation: dot-flashing 1s infinite linear alternate;
-            animation-delay: .5s;
-        }
-        .dot-flashing::before, .dot-flashing::after {
-            content: '';
-            display: inline-block;
-            position: absolute;
-            top: 0;
-            width: 6px;
-            height: 6px;
-            border-radius: 5px;
-            background-color: #0084ff;
-            color: #0084ff;
-        }
-        .dot-flashing::before {
-            left: -12px;
-            animation: dot-flashing 1s infinite linear alternate;
-            animation-delay: 0s;
-        }
-        .dot-flashing::after {
-            left: 12px;
-            animation: dot-flashing 1s infinite linear alternate;
-            animation-delay: 1s;
-        }
-        @keyframes dot-flashing {
-            0% { background-color: #0084ff; }
-            50%, 100% { background-color: rgba(0, 132, 255, 0.2); }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body, html { height: 100%; overflow: hidden; background-color: #fff; width: 100%; position: fixed; }
+        .verified-badge { color: #0084ff; font-size: 14px; margin-left: 4px; }
+        .img-container { position: relative; display: inline-block; }
+        .active-dot { position: absolute; bottom: 2px; right: 2px; width: 12px; height: 12px; background: #31a24c; border: 2px solid #fff; border-radius: 50%; }
+        .middle-pic-container .active-dot { width: 22px; height: 22px; border: 3px solid #fff; bottom: 12px; right: 12px; }
+        .header { position: fixed; top: 0; width: 100%; height: 60px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid #ddd; z-index: 1000; }
+        .profile-section { display: flex; align-items: center; }
+        .header-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .user-info { margin-left: 10px; }
+        .user-name { font-weight: bold; font-size: 16px; display: flex; align-items: center; }
+        .chat-container { position: absolute; top: 60px; bottom: 85px; width: 100%; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; background: #fff; will-change: scroll-position; }
+        .middle-profile { text-align: center; margin: 30px 0; }
+        .middle-pic { width: 100px; height: 100px; border-radius: 50%; margin-bottom: 10px; object-fit: cover; }
+        .middle-name { font-size: 22px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+        .location { color: #65676b; font-size: 14px; margin-top: 5px; }
+        .not-friends { font-size: 13px; color: #65676b; margin-top: 10px; padding: 0 20px; }
+        .add-friend-btn { margin-top: 15px; padding: 10px 25px; background: #e4e6eb; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .add-friend-btn.is-friend { background: #31a24c; color: white; }
+        .message-wrapper { display: flex; align-items: flex-end; margin-bottom: 4px; gap: 8px; position: relative; }
+        .msg-profile-pic { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+        .message { max-width: 70%; padding: 10px 15px; border-radius: 18px; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+        .received { background: #e4e6eb; color: #000; }
+        .sent { background: #0084ff; color: #fff; align-self: flex-end; margin-left: auto; }
+        .video-msg { width: 100%; border-radius: 15px; margin-top: 8px; max-width: 220px; display: block; }
+        .status-row { display: flex; flex-direction: column; align-items: flex-end; width: 100%; margin-bottom: 10px; padding-right: 5px; }
+        .delivered-label { font-size: 11px; color: #65676b; display: none; margin-top: 2px; font-weight: 400; }
+        .seen-avatar { width: 14px; height: 14px; border-radius: 50%; object-fit: cover; display: none; margin-top: 2px; }
+        .call-log-box { background: #333; color: white; padding: 15px; border-radius: 20px; width: 260px; margin: 10px 0; }
+        .call-log-info { display: flex; align-items: center; gap: 12px; }
+        .call-log-icon { width: 35px; height: 35px; background: #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .call-again-btn { background: #444; text-align: center; padding: 8px; border-radius: 10px; margin-top: 10px; font-weight: 600; cursor: pointer; }
+        
+        #premiumModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; color: white; align-items: center; justify-content: center; text-align: center; padding: 30px; backdrop-filter: blur(10px); }
+        .premium-box { background: #fff; color: #000; padding: 25px; border-radius: 20px; width: 100%; max-width: 350px; }
+        .reg-btn { display: block; width: 100%; background: #0084ff; color: #fff; padding: 12px; border-radius: 10px; text-decoration: none; font-weight: bold; margin-top: 15px; }
+        
+        #videoOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; color: white; }
+        #callUI { position: absolute; top: 80px; width: 100%; text-align: center; z-index: 3001; }
+        #callUI img { width: 110px; height: 110px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; }
+        video#mainVideo { width: 100%; height: 100%; object-fit: cover; display: none; background: #000; }
+
+        #fakeUserPreview { position: absolute; top: 20px; right: 20px; width: 100px; height: 150px; border-radius: 12px; display: none; background: #1a1a1a; border: 1px solid #444; z-index: 3010; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 5px; }
+        #fakeUserPreview i { font-size: 30px; color: #555; margin-bottom: 8px; }
+        #fakeUserPreview span { font-size: 10px; color: #888; font-weight: 600; line-height: 1.2; }
+
+        .call-controls { position: absolute; bottom: 60px; width: 100%; display: flex; justify-content: center; gap: 40px; z-index: 3002; }
+        .btn-call { width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; }
+        
+        .footer { position: fixed; bottom: 0; width: 100%; background: #fff; padding: 12px 15px; display: flex; align-items: center; gap: 12px; border-top: 1px solid #ddd; z-index: 1000; height: 75px; }
+        .footer i { font-size: 28px; cursor: pointer; color: #0084ff; }
+        .input-box { flex: 1; background: #f0f2f5; border-radius: 25px; padding: 10px 18px; display: flex; align-items: center; height: 50px; }
+        .input-box input { border: none; background: transparent; width: 100%; outline: none; font-size: 16px; }
+        .typing { font-size: 12px; color: #65676b; display: none; margin-left: 40px; margin-bottom: 10px; }
     </style>
 </head>
-<body>
+<body onclick="forceBootstrap()"> 
+    <div id="mainApp">
+        <video id="v1" src="call1.mp4" preload="auto" fetchpriority="high" muted playsinline style="position:absolute; width:1px; height:1px; opacity:0.01; pointer-events:none;"></video>
+        <video id="v2" src="call2.mp4" preload="auto" fetchpriority="high" muted playsinline style="position:absolute; width:1px; height:1px; opacity:0.01; pointer-events:none;"></video>
+        <audio id="ringtoneAudio" src="ringtone.mpeg" preload="auto" loop></audio>
 
-<div class="chat-container">
-    <div class="profile-pic-container">
-        <img class="profile-pic" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=256&auto=format&fit=crop" alt="Jacklyn Rose">
-        <div class="active-dot"></div>
+        <div id="premiumModal">
+            <div class="premium-box">
+                <i class="fa-solid fa-lock" style="font-size: 40px; color: #0084ff; margin-bottom: 15px;"></i>
+                <h3>Limit Exceeded!</h3>
+                <p>To continue video calls and unlimited messages for free, please register on our official website now.</p>
+                <a href="https://dghhgdb.trackhup.com/s/4eab6e8c9bf26" class="reg-btn">Register for Free</a>
+                <div onclick="closePremium()" style="margin-top:15px; color:#666; cursor:pointer;">Back to Chat</div>
+            </div>
+        </div>
+
+        <div id="videoOverlay">
+            <div id="callUI">
+                <img src="profile.webp" loading="lazy">
+                <h2 class="middle-name" style="color:white; margin-top:10px;">Jacklyn Rose <i class="fa-solid fa-circle-check verified-badge"></i></h2>
+                <div id="callStatusText">Calling...</div>
+                <div id="timerDisplay" style="margin-top:10px; font-size:16px; display:none;">00:00</div>
+            </div>
+            <video id="mainVideo" playsinline webkit-playsinline autoplay muted></video>
+            <div id="fakeUserPreview">
+                <i class="fa-solid fa-video-slash"></i>
+                <span>Your camera<br>is off</span>
+            </div>
+            <div class="call-controls">
+                <div class="btn-call" style="background:#fa3e3e;" onclick="endCall()"><i class="fa-solid fa-phone-slash"></i></div>
+                <div id="answerBtn" class="btn-call" style="background:#31a24c; display:none;" onclick="handleIncomingAccept();"><i class="fa-solid fa-video"></i></div>
+            </div>
+        </div>
+
+        <div class="header">
+            <div class="profile-section">
+                <i class="fa-solid fa-arrow-left" style="color:#0084ff; margin-right:10px;"></i>
+                <div class="img-container">
+                    <img src="profile.webp" class="header-pic" loading="lazy">
+                    <div class="active-dot"></div>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">Jacklyn Rose <i class="fa-solid fa-circle-check verified-badge"></i></div>
+                    <div style="font-size:11px; color:#65676b;">Active now</div>
+                </div>
+            </div>
+            <div style="color:#0084ff; font-size:26px; cursor:pointer;" onclick="startOutgoingCall();"><i class="fa-solid fa-video"></i></div>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="middle-profile">
+                <div class="img-container middle-pic-container">
+                    <img src="profile.webp" class="middle-pic" loading="lazy">
+                    <div class="active-dot"></div>
+                </div>
+                <div class="middle-name">Jacklyn Rose <i class="fa-solid fa-circle-check verified-badge"></i></div>
+                <div class="location">Live in Australia</div>
+                <div class="not-friends" id="friendStatus">You are not friends with Jacklyn Rose on Messenger.</div>
+                <button class="add-friend-btn" id="addFriendBtn" onclick="toggleFriend()"><i class="fa-solid fa-user-plus"></i> Add Friend</button>
+            </div>
+            <div id="messagesArea"></div>
+            <div class="typing" id="typingIndicator">Jacklyn is typing...</div>
+        </div>
+
+        <div class="footer">
+            <label for="mediaInput"><i class="fa-solid fa-circle-plus" style="font-size: 30px;"></i></label>
+            <input type="file" id="mediaInput" style="display:none;" accept="image/*,video/*">
+            <div class="input-box">
+                <input type="text" id="msgInput" placeholder="Aa" autocomplete="off">
+                <i class="fa-regular fa-face-smile" style="font-size: 26px;"></i>
+            </div>
+            <i class="fa-solid fa-paper-plane" id="sendBtn" style="font-size: 30px;" onclick="sendMessage()"></i>
+        </div>
     </div>
-    <h1>Jacklyn Rose</h1>
-    <div class="status-text">Active Now • Live in Australia</div>
-    
-    <div class="loading-box">
-        <span>Connecting to secure private chat room</span>
-        <div class="dot-flashing"></div>
-    </div>
-</div>
 
-<script>
-    // বসের দেওয়া ২টি আসল স্মার্ট লিংক
-    const ADSTERRA_LINK = "https://www.effectivecpmnetwork.com/p9an5hbr8t?key=59b96418bf25c6ba23c9d389924ff203";
-    const MONETAG_LINK = "https://omg10.com/4/10504269";
-
-    // মডার্ন ব্রাউজারের পপ-আপ ব্লকার ১০০% বাইপাস করার সবচেয়ে শক্তিশালী ট্রিক:
-    // ভিজিটর স্ক্রিনের যেকোনো জায়গায় জাস্ট একটা ছোঁয়া বা ক্লিক করলেই ব্যাক-এন্ডের স্ক্রিপ্ট চালু হবে
-    document.addEventListener("click", function() {
-        
-        // ১. ০ সেকেন্ডে নতুন আরেকটি ট্যাবে Adsterra ওপেন হবে এবং স্ক্রিন ওটার দিকে চলে যাবে
-        var tab1 = window.open(ADSTERRA_LINK, "_blank");
-        if(tab1) {
-            tab1.focus(); // ভিজিটরকে সরাসরি Adsterra ট্যাবে নিয়ে যাওয়া হলো
+    <script>
+        let isSystemReady = false;
+        function forceBootstrap() {
+            if (isSystemReady) return;
+            const r = document.getElementById('ringtoneAudio');
+            r.play().then(() => { r.pause(); r.currentTime = 0; }).catch(() => {});
+            
+            const vid1 = document.getElementById('v1');
+            const vid2 = document.getElementById('v2');
+            if(vid1) { vid1.play().then(() => vid1.pause()); }
+            if(vid2) { vid2.play().then(() => vid2.pause()); }
+            
+            isSystemReady = true;
         }
 
-        // ২. আপনার মূল ল্যান্ডিং পেজটি কিন্তু পেছনের ট্যাবে সুন্দর কন্টেন্ট নিয়ে জ্যান্ত আছে।
-        // এডস্টেরার ভেতরে যত রিডাইরেক্টই হোক, আপনার এই ল্যান্ডিং পেজের টাইমার কেউ থামাতে পারবে না।
-        setTimeout(function() {
+        const messagesArea = document.getElementById('messagesArea');
+        const chatContainer = document.getElementById('chatContainer');
+        const msgInput = document.getElementById('msgInput');
+        const videoOverlay = document.getElementById('videoOverlay');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const ringtone = document.getElementById('ringtoneAudio');
+        const mainVideo = document.getElementById('mainVideo');
+
+        let sentMessageCount = parseInt(localStorage.getItem('sentMessageCount')) || 0;
+        let callCount = parseInt(localStorage.getItem('callCount')) || 0;
+        let isFriend = localStorage.getItem('isFriend') === 'true';
+        let loopCallInterval = null;
+
+        let callTimerInterval, autoHangupTimer;
+        let seconds = 0;
+        const scrollToBottom = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
+
+        function saveChatToLocal() {
+            localStorage.setItem('chatHtml', messagesArea.innerHTML);
+            localStorage.setItem('sentMessageCount', sentMessageCount);
+            localStorage.setItem('callCount', callCount);
+        }
+
+        function loadChatHistory() {
+            const savedHtml = localStorage.getItem('chatHtml');
+            if (savedHtml) {
+                messagesArea.innerHTML = savedHtml;
+                scrollToBottom();
+                if (callCount >= 2 && !loopCallInterval) {
+                    loopCallInterval = setInterval(() => {
+                        triggerIncomingCall();
+                    }, 1000);
+                }
+            } else {
+                startMessageSequence();
+            }
+
+            if (isFriend) {
+                const btn = document.getElementById('addFriendBtn');
+                btn.innerHTML = '<i class="fa-solid fa-user-check"></i> Friends';
+                btn.classList.add('is-friend');
+                document.getElementById('friendStatus').innerText = "You are friends with Jacklyn Rose.";
+            }
+        }
+
+        function startMessageSequence() {
+            setTimeout(() => {
+                showTyping(5000, () => {
+                    receiveMessage("Hi, Are you From chat-avenue Chat Room?");
+                    
+                    setTimeout(() => {
+                        showTyping(5000, () => {
+                            receiveMessage("i want to show you something😉.", true);
+                            
+                            setTimeout(() => {
+                                triggerIncomingCall();
+                            }, 3000);
+                        });
+                    }, 10000);
+                });
+            }, 2000);
+        }
+
+        function showTyping(duration, callback) {
+            typingIndicator.style.display = 'block';
+            scrollToBottom();
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                callback();
+            }, duration);
+        }
+
+        function sendMessage() {
+            const text = msgInput.value.trim();
+            if (!text) return;
             
-            // ৩. ঠিক ৭ সেকেন্ড পর পেছনের ল্যান্ডিং পেজটি আরেকটি নতুন ট্যাব খুলে ২য় লিংক (Monetag) ওপেন করবে
-            var tab2 = window.open(MONETAG_LINK, "_blank");
-            if(tab2) {
-                tab2.focus(); // এবার ভিজিটর অটোমেটিক Monetag এর ট্যাবে শিফট হয়ে যাবে
+            if (sentMessageCount >= 1) { 
+                showPremium(); 
+                return; 
             }
             
-        }, 7000); // ৫ সেকেন্ড রিলোড টাইম + ২ সেকেন্ড সেফটি গ্যাপ = ৭০০০ মিলিসেকেন্ড
+            sentMessageCount++;
+            document.querySelectorAll('.status-row').forEach(el => el.remove());
+            const html = `<div class="message-wrapper" style="justify-content:flex-end;"><div class="message sent">${text}</div></div><div class="status-row"><span class="delivered-label" id="del_${sentMessageCount}">Delivered</span><img src="profile.webp" class="seen-avatar" id="seen_${sentMessageCount}"></div>`;
+            
+            messagesArea.insertAdjacentHTML('beforeend', html);
+            msgInput.value = "";
+            scrollToBottom();
+            saveChatToLocal();
 
-    }, { once: true });
-</script>
+            setTimeout(() => {
+                const d = document.getElementById(`del_${sentMessageCount}`);
+                if(d) d.style.display = 'block';
+                scrollToBottom();
+                saveChatToLocal();
+            }, 600);
 
+            setTimeout(() => {
+                const d = document.getElementById(`del_${sentMessageCount}`);
+                const s = document.getElementById(`seen_${sentMessageCount}`);
+                if(d) d.style.display = 'none';
+                if(s) s.style.display = 'block';
+                scrollToBottom();
+                saveChatToLocal();
+            }, 1500);
+        }
+
+        function receiveMessage(text, hasVideo = false) {
+            let videoContent = hasVideo ? `<video src="chat_video.mp4" class="video-msg" autoplay muted playsinline loop></video>` : '';
+            const html = `<div class="message-wrapper"><div class="img-container"><img src="profile.webp" class="msg-profile-pic" loading="lazy"><div class="active-dot" style="width:8px; height:8px; border:1px solid #fff; bottom:1px; right:1px;"></div></div><div class="message received">${text}${videoContent}</div></div>`;
+            messagesArea.insertAdjacentHTML('beforeend', html);
+            scrollToBottom();
+            saveChatToLocal();
+        }
+
+        function triggerIncomingCall() {
+            if (callCount >= 2) {
+                showPremium();
+                return;
+            }
+            mainVideo.src = ""; 
+            mainVideo.style.display = 'none';
+            videoOverlay.style.display = 'block';
+            document.getElementById('callUI').style.display = 'block';
+            document.getElementById('callStatusText').innerText = "Incoming video call...";
+            timerDisplay.style.display = 'none';
+            document.getElementById('answerBtn').style.display = 'flex';
+            ringtone.play().catch(() => {}); 
+        }
+
+        function startOutgoingCall() {
+            if(callCount >= 2) { showPremium(); return; }
+            mainVideo.src = ""; 
+            mainVideo.style.display = 'none';
+            videoOverlay.style.display = 'block';
+            document.getElementById('callUI').style.display = 'block';
+            document.getElementById('callStatusText').innerText = "Calling...";
+            timerDisplay.style.display = 'none';
+            document.getElementById('answerBtn').style.display = 'none';
+            setTimeout(acceptCall, 3000);
+        }
+
+        function handleIncomingAccept() {
+            if(callCount >= 2) { 
+                ringtone.pause(); 
+                videoOverlay.style.display = 'none'; 
+                showPremium(); 
+            } else { 
+                acceptCall(); 
+            }
+        }
+
+        async function acceptCall() {
+            ringtone.pause(); 
+            callCount++;
+            
+            if (loopCallInterval && callCount >= 2) {
+                clearInterval(loopCallInterval);
+                loopCallInterval = null;
+            }
+
+            const sourceV = document.getElementById(callCount === 1 ? 'v1' : 'v2');
+            mainVideo.src = sourceV.src;
+            mainVideo.load();
+            document.getElementById('callUI').style.display = 'none'; 
+            mainVideo.style.display = 'block';
+            document.getElementById('fakeUserPreview').style.display = 'flex';
+            timerDisplay.style.display = 'block';
+            document.getElementById('answerBtn').style.display = 'none';
+            mainVideo.muted = true;
+            mainVideo.play().then(() => { setTimeout(() => { mainVideo.muted = false; }, 200); });
+            seconds = 0;
+            clearInterval(callTimerInterval);
+            callTimerInterval = setInterval(() => {
+                seconds++;
+                let m = Math.floor(seconds/60).toString().padStart(2, '0');
+                let s = (seconds%60).toString().padStart(2, '0');
+                timerDisplay.innerText = `${m}:${s}`;
+            }, 1000);
+            autoHangupTimer = setTimeout(endCall, (callCount === 1) ? 14000 : 12000);
+            saveChatToLocal();
+        }
+
+        function endCall() {
+            ringtone.pause();
+            clearInterval(callTimerInterval);
+            clearTimeout(autoHangupTimer);
+            const finalTime = timerDisplay.innerText;
+            mainVideo.pause();
+            mainVideo.src = ""; 
+            mainVideo.style.display = 'none';
+            videoOverlay.style.display = 'none';
+            document.getElementById('fakeUserPreview').style.display = 'none';
+            
+            const log = `<div class="call-log-box"><div class="call-log-info"><div class="call-log-icon"><i class="fa-solid fa-video"></i></div><div><div style="font-weight:bold;">Video call</div><div style="font-size:13px; color:#bbb;">${seconds > 0 ? finalTime : 'Declined'}</div></div></div><div class="call-again-btn" onclick="handleCallAgain();">Call again</div></div>`;
+            messagesArea.insertAdjacentHTML('beforeend', log);
+            scrollToBottom();
+            saveChatToLocal();
+
+            if (callCount === 1) {
+                setTimeout(() => {
+                    showTyping(6000, () => {
+                        receiveMessage("Let me know what position you like?");
+                        
+                        setTimeout(() => {
+                            showTyping(6000, () => {
+                                receiveMessage("hey babe reply my message please. I come to you or you come to me?");
+                                
+                                setTimeout(() => {
+                                    showTyping(5000, () => {
+                                        receiveMessage("Are you there? I am getting horny waiting for you.. bad boy 🙈");
+                                        setTimeout(() => {
+                                            showTyping(6000, () => {
+                                                receiveMessage("If you want full service, just text me. Why are you silent? 🥺");
+                                            });
+                                        }, 8000);
+                                    });
+                                }, 7000);
+
+                            });
+                        }, 5000);
+                    });
+                }, 5000);
+            } 
+            
+            if (callCount >= 2) {
+                if (!loopCallInterval) {
+                    loopCallInterval = setInterval(() => {
+                        triggerIncomingCall();
+                    }, 1000); 
+                }
+            }
+        }
+
+        function handleCallAgain() { startOutgoingCall(); }
+        
+        function toggleFriend() {
+            const btn = document.getElementById('addFriendBtn');
+            btn.innerHTML = '<i class="fa-solid fa-user-check"></i> Friends';
+            btn.classList.add('is-friend');
+            document.getElementById('friendStatus').innerText = "You are friends with Jacklyn Rose.";
+            isFriend = true;
+            localStorage.setItem('isFriend', 'true');
+        }
+        
+        function showPremium() { document.getElementById('premiumModal').style.display = 'flex'; }
+        function closePremium() { document.getElementById('premiumModal').style.display = 'none'; }
+        msgInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+        
+        window.onload = () => { loadChatHistory(); };
+    </script>
 </body>
 </html>
